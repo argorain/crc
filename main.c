@@ -88,7 +88,7 @@ void generate_e(uint8_t *evect, size_t length) {
 
 void generate_syndrom(uint8_t *evect, uint16_t *syndrom, size_t length) {
     for(int i=0; i<length*8; i++) {
-        syndrom[i] = crcccit(evect+i*length, length, 0xFFFF, 0);
+        syndrom[i] = crcccit(evect+i*length, length-2, 0xFFFF, 0);
     }
 }
 
@@ -136,10 +136,14 @@ int main(int argc, char **argv) {
 #endif
 
 
-    crcval = crcccit(data, DSIZE-2, 0xFFFF, 0);
+    uint16_t crcval_gotten = crcccit(data, DSIZE-2, 0xFFFF, 0);
 
-    printf("\n\nCRC: %x\n", crcval);
+    printf("\n\nCRC: %x\n", crcval_gotten);
 
+    uint16_t crc_xor = crcval ^ crcval_gotten;
+
+    printf("\n\nCRC XOR: %x\n", crc_xor);
+    
     for(int i=0; i<DSIZE*8; i++) {
         if(crcval == syndrom[i]) {
             printf("MATCH at %i\n", i);
